@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <title>Document</title>
+</head>
+
+<body>
+    <h1 id="vikas">Vikas</h1>
+</body>
+<script>
+    const head = document.querySelector('#vikas')
+
+    fetch('http://localhost:5000/api/data')
+        .then((res) => { return res.json() })
+        .then((data) => {
+            head.textContent = data.message;
+        })
+</script>
+
+</html>
