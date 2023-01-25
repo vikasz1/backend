@@ -7,7 +7,6 @@ const data = require("./data");
 
 app.get("/api/data", (req, res) => {
   res.json(data);
-  
 });
 
 app.listen(5000, () => {
