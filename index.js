@@ -23,36 +23,34 @@ const courseSchema = new mongoose.Schema({
   isPulished: Boolean,
 });
 const Course = mongoose.model("Course", courseSchema);
-
-let sample;
+let allCourses = null;
 async function getCourses() {
-  const courses = await Course.find({ author: "Mosh" });
+  const courses = await Course.find();
   console.log(courses);
-  sample = courses;
-  // return courses
+  allCourses = courses;
 }
 async function createCourse() {
   const course = new Course({
     name: "Java Course",
-    author: "Abdul bari",
+    author: "Vikas Maury",
     tags: ["simple", "OOPS"],
     isPulished: true,
     price: 15,
   });
-  try { 
-    const result = await course.save();// or do validate()
+  try {
+    const result = await course.save(); // or do validate()
     // await course.validate();
     console.log(result);
   } catch (err) {
     console.log(err.message);
   }
-} 
-createCourse()
-getCourses();
+}
 
 app.get("/api/data", (req, res) => {
-  console.log(sample);
-  res.json(sample);
+  createCourse();
+  getCourses();
+  console.log("My course:", allCourses);
+  res.json(allCourses);
 });
 app.get("/", (req, res) => {
   res.json("Go to /api/data to get the data.");
