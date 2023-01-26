@@ -49,7 +49,7 @@ async function createCourse() {
     console.log(err.message);
   }
 }
-
+getCourses();
 app.get("/api/data", (req, res) => {
   createCourse();
   getCourses();
