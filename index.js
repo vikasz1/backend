@@ -8,7 +8,7 @@ const data = require("./data");
 app.get("/api/data", (req, res) => {
   res.json(data);
 });
-
-app.listen(5000, () => {
-  console.log("API listening on port 5000!");
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => {
+  console.log(`API listening on port ${PORT}!`);
 });
