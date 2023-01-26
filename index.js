@@ -10,7 +10,8 @@ app.use(express.static("public"));
 const mongoose = require("mongoose");
 mongoose.set("strictQuery", false);
 mongoose
-  .connect("mongodb://localhost/playground")
+  // .connect("mongodb://localhost/playground")
+  .connect("mongodb+srv://vikasz1:vikas@vidly-cluster.5mjlubi.mongodb.net/mydb")
   .then(() => console.log("Connected to mongodb"))
   .catch((err) => console.error("Couldn't connect to db", err));
 
@@ -30,6 +31,23 @@ async function getCourses() {
   sample = courses;
   // return courses
 }
+async function createCourse() {
+  const course = new Course({
+    name: "Java Course",
+    author: "Abdul bari",
+    tags: ["simple", "OOPS"],
+    isPulished: true,
+    price: 15,
+  });
+  try { 
+    const result = await course.save();// or do validate()
+    // await course.validate();
+    console.log(result);
+  } catch (err) {
+    console.log(err.message);
+  }
+} 
+createCourse()
 getCourses();
 
 app.get("/api/data", (req, res) => {
