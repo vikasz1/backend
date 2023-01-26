@@ -4,6 +4,10 @@ const app = express();
 const cors = require("cors"); //Added this to resolve error of cors-connection
 app.use(cors());
 
+require('dotenv').config()
+const mongo_uri = process.env.mongo_uri
+
+
 //middleware
 app.use(express.static("public"));
 
@@ -11,7 +15,7 @@ const mongoose = require("mongoose");
 mongoose.set("strictQuery", false);
 mongoose
   // .connect("mongodb://localhost/playground")
-  .connect("mongodb+srv://vikasz1:vikas@vidly-cluster.5mjlubi.mongodb.net/mydb")
+  .connect(mongo_uri)
   .then(() => console.log("Connected to mongodb"))
   .catch((err) => console.error("Couldn't connect to db", err));
 
@@ -53,7 +57,8 @@ app.get("/api/data", (req, res) => {
   res.json(allCourses);
 });
 app.get("/", (req, res) => {
-  res.json("Go to /api/data to get the data.");
+  getCourses();
+  res.send(`total ${allCourses.length} courses available in the database(mongo)`);
 });
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
