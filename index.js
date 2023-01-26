@@ -1,12 +1,43 @@
 const express = require("express");
+const data = require("./data");
 const app = express();
 const cors = require("cors"); //Added this to resolve error of cors-connection
 app.use(cors());
 
-const data = require("./data");
+//middleware
+app.use(express.static("public"));
+
+const mongoose = require("mongoose");
+mongoose.set("strictQuery", false);
+mongoose
+  .connect("mongodb://localhost/playground")
+  .then(() => console.log("Connected to mongodb"))
+  .catch((err) => console.error("Couldn't connect to db", err));
+
+const courseSchema = new mongoose.Schema({
+  name: { type: String, required: true },
+  author: String,
+  tags: [String],
+  date: { type: Date, default: Date.now },
+  isPulished: Boolean,
+});
+const Course = mongoose.model("Course", courseSchema);
+
+let sample;
+async function getCourses() {
+  const courses = await Course.find({ author: "Mosh" });
+  console.log(courses);
+  sample = courses;
+  // return courses
+}
+getCourses();
 
 app.get("/api/data", (req, res) => {
-  res.json(data);
+  console.log(sample);
+  res.json(sample);
+});
+app.get("/", (req, res) => {
+  res.json("Go to /api/data to get the data.");
 });
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {

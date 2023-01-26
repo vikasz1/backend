@@ -1,6 +1,6 @@
 const express = require("express");
 const mongodb = require("mongodb");
-
+//ChatGPT response
 const router = express.Router();
 const MongoClient = mongodb.MongoClient;
 const url = "mongodb://localhost:27017";
