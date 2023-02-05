@@ -4,12 +4,12 @@ const app = express();
 const cors = require("cors"); //Added this to resolve error of cors-connection
 app.use(cors());
 
-require('dotenv').config()
-const mongo_uri = process.env.mongo_uri
-
+require("dotenv").config();
+const mongo_uri = process.env.mongo_uri;
 
 //middleware
 app.use(express.static("public"));
+app.use(express.json());
 
 const mongoose = require("mongoose");
 mongoose.set("strictQuery", false);
@@ -28,19 +28,13 @@ const courseSchema = new mongoose.Schema({
 });
 const Course = mongoose.model("Course", courseSchema);
 let allCourses = null;
+
 async function getCourses() {
   const courses = await Course.find();
   console.log(courses);
   allCourses = courses;
 }
-async function createCourse() {
-  const course = new Course({
-    name: "Java Course",
-    author: "Vikas Maury",
-    tags: ["simple", "OOPS"],
-    isPulished: true,
-    price: 15,
-  });
+async function createCourse(course) {
   try {
     const result = await course.save(); // or do validate()
     // await course.validate();
@@ -49,17 +43,26 @@ async function createCourse() {
     console.log(err.message);
   }
 }
-getCourses();
+
 app.get("/api/data", (req, res) => {
-  createCourse();
   getCourses();
-  console.log("My course:", allCourses);
+  // console.log("My course:", allCourses);`
   res.json(allCourses);
 });
+
 app.get("/", (req, res) => {
   getCourses();
-  res.send(`total ${allCourses.length} courses available in the database(mongo)`);
+  res.send(
+    `total ${allCourses.length} courses available in the database(mongo)`
+  );
 });
+
+app.post("/api/data", async (req, res) => {
+  const course = new Course({ name: req.body.name });
+  createCourse(course)
+  res.send(req.body)
+});
+
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`API listening on port ${PORT}!`);
