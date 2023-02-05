@@ -20,11 +20,13 @@ mongoose
   .catch((err) => console.error("Couldn't connect to db", err));
 
 const courseSchema = new mongoose.Schema({
-  name: { type: String, required: true },
+  name: { type: String},
   author: String,
   tags: [String],
   date: { type: Date, default: Date.now },
   isPulished: Boolean,
+  email: String,
+  password: String,
 });
 const Course = mongoose.model("Course", courseSchema);
 let allCourses = null;
@@ -58,9 +60,12 @@ app.get("/", (req, res) => {
 });
 
 app.post("/api/data", async (req, res) => {
-  const course = new Course({ name: req.body.name });
-  createCourse(course)
-  res.send(req.body)
+  const course = new Course({
+    email: req.body.email,
+    password: req.body.password,
+  });
+  createCourse(course);
+  res.send(req.body);
 });
 
 const PORT = process.env.PORT || 5000;
