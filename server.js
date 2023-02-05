@@ -4,7 +4,7 @@ const mongodb = require("mongodb");
 const router = express.Router();
 const MongoClient = mongodb.MongoClient;
 const url = "mongodb://localhost:27017";
-const dbName = "mydb";
+const dbName = "mydb";  
 
 router.get("/", (req, res) => {
   MongoClient.connect(url, { useUnifiedTopology: true }, (err, client) => {
