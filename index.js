@@ -21,8 +21,8 @@ mongoose
 
 const courseSchema = new mongoose.Schema({
   email: String,
-  parentName: { type: String},
-  studentName: { type: String},
+  parentName: { type: String },
+  studentName: { type: String },
   phone: String,
   message: String,
   date: { type: Date, default: Date.now },
@@ -34,7 +34,7 @@ let allCourses = null;
 
 async function getCourses() {
   const courses = await Course.find();
-  console.log(courses);
+  // console.log(courses);
   allCourses = courses;
 }
 async function createCourse(course) {
@@ -47,8 +47,8 @@ async function createCourse(course) {
   }
 }
 
-app.get("/api/data", (req, res) => {
-  getCourses();
+app.get("/api/data", async (req, res) => {
+  await getCourses();
   // console.log("My course:", allCourses);`
   res.json(allCourses);
 });
