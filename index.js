@@ -14,6 +14,7 @@ app.use(express.json());
 
 const mongoose = require("mongoose");
 mongoose.set("strictQuery", false);
+
 mongoose
   // .connect("mongodb://localhost/playground")
   .connect(mongo_uri)
@@ -21,14 +22,14 @@ mongoose
   .catch((err) => console.error("Couldn't connect to db", err));
 
 const courseSchema = new mongoose.Schema({
-  email: { type: String, trim: true,required:true },
-  parentName: { type: String , trim: true,required:true },
-  studentName: { type: String, trim: true ,required:true },
-  phone: { type: Number, required:true  },
+  email: { type: String, trim: true, required: true },
+  parentName: { type: String, trim: true, required: true },
+  studentName: { type: String, trim: true, required: true },
+  phone: { type: String, required: true },
   message: String,
-  date: { type: Date, default: Date.now,required:true },
-  qualification: { type: String, trim: true ,required:true },
-  hasLaptop: { type: String, trim: true ,required:true },
+  date: { type: Date, default: Date.now, required: true },
+  qualification: { type: String, trim: true, required: true },
+  hasLaptop: { type: String, trim: true, required: true },
 });
 const Course = mongoose.model("Course", courseSchema);
 let allCourses = null;
@@ -43,10 +44,10 @@ function courseValidate(course) {
     studentName: Joi.string().min(3).max(50).required(),
     parentName: Joi.string().min(3).max(50).required(),
     email: Joi.string().min(3).max(50).required(),
-    phone: Joi.number().required(), 
-    message: Joi.string().min(3).max(50),
+    phone: Joi.string().length(10).regex(/^\d+$/).required(),
+    message: Joi.string().min(3).max(150).required(),
     qualification: Joi.string().min(1).max(50).required(),
-    hasLaptop: Joi.string().min(3).max(50).required(),
+    hasLaptop: Joi.string().min(2).max(50).required(),
   };
   return Joi.validate(course, schema);
 }
@@ -86,6 +87,7 @@ app.post("/api/data", async (req, res) => {
     hasLaptop: req.body.hasLaptop,
   });
   await course.save();
+  console.log("Course created:", course);
   res.send(course);
 });
 
