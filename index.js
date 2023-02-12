@@ -1,6 +1,7 @@
 const express = require("express");
 const data = require("./data");
 const app = express();
+const Joi = require("@hapi/joi");
 const cors = require("cors"); //Added this to resolve error of cors-connection
 app.use(cors());
 
@@ -20,10 +21,10 @@ mongoose
   .catch((err) => console.error("Couldn't connect to db", err));
 
 const courseSchema = new mongoose.Schema({
-  email: String,
-  parentName: { type: String },
-  studentName: { type: String },
-  phone: String,
+  email: { type: String, trim: true },
+  parentName: { type: String , trim: true },
+  studentName: { type: String, trim: true  },
+  phone: { type: Number, trim: true  },
   message: String,
   date: { type: Date, default: Date.now },
   qualification: String,
@@ -37,15 +38,26 @@ async function getCourses() {
   // console.log(courses);
   allCourses = courses;
 }
-async function createCourse(course) {
-  try {
-    const result = await course.save(); // or do validate()
-    // await course.validate();
-    console.log(result);
-  } catch (err) {
-    console.log(err.message);
-  }
+function courseValidate(course) {
+  const schema = {
+    studentName: Joi.string().min(3).max(50).required(),
+    parentName: Joi.string().min(3).max(50).required(),
+    email: Joi.string().min(3).max(50).required(),
+    phone: Joi.number().min(6).max(15).required(),
+    message: Joi.string().min(3).max(50),
+    qualification: Joi.string().min(1).max(50).required(),
+    hasLaptop: Joi.string().min(3).max(50).required(),
+  };
+  return Joi.validate(course, schema);
 }
+// async function createCourse(course) {
+//   try {
+//     const result = await course.save(); // or do validate()
+//     console.log(result);
+//   } catch (err) {
+//     console.log(err.message);
+//   }
+// }
 
 app.get("/api/data", async (req, res) => {
   await getCourses();
@@ -61,6 +73,9 @@ app.get("/", (req, res) => {
 });
 
 app.post("/api/data", async (req, res) => {
+  const { error } = courseValidate(req.body);
+  if (error) return res.status(400).send(error.details[0].message);
+
   const course = new Course({
     email: req.body.email,
     parentName: req.body.parentName,
@@ -70,8 +85,8 @@ app.post("/api/data", async (req, res) => {
     qualification: req.body.qualification,
     hasLaptop: req.body.hasLaptop,
   });
-  createCourse(course);
-  res.send(req.body);
+  await course.save();
+  res.send(course);
 });
 
 const PORT = process.env.PORT || 5000;
