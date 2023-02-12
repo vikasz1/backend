@@ -21,14 +21,14 @@ mongoose
   .catch((err) => console.error("Couldn't connect to db", err));
 
 const courseSchema = new mongoose.Schema({
-  email: { type: String, trim: true },
-  parentName: { type: String , trim: true },
-  studentName: { type: String, trim: true  },
-  phone: { type: Number, trim: true  },
+  email: { type: String, trim: true,required:true },
+  parentName: { type: String , trim: true,required:true },
+  studentName: { type: String, trim: true ,required:true },
+  phone: { type: Number, required:true  },
   message: String,
-  date: { type: Date, default: Date.now },
-  qualification: String,
-  hasLaptop: String,
+  date: { type: Date, default: Date.now,required:true },
+  qualification: { type: String, trim: true ,required:true },
+  hasLaptop: { type: String, trim: true ,required:true },
 });
 const Course = mongoose.model("Course", courseSchema);
 let allCourses = null;
@@ -43,7 +43,7 @@ function courseValidate(course) {
     studentName: Joi.string().min(3).max(50).required(),
     parentName: Joi.string().min(3).max(50).required(),
     email: Joi.string().min(3).max(50).required(),
-    phone: Joi.number().min(6).max(15).required(),
+    phone: Joi.number().required(), 
     message: Joi.string().min(3).max(50),
     qualification: Joi.string().min(1).max(50).required(),
     hasLaptop: Joi.string().min(3).max(50).required(),
