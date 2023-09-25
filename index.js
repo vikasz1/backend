@@ -32,18 +32,17 @@ const courseSchema = new mongoose.Schema({
   hasLaptop: { type: String, trim: true, required: true },
 });
 const Course = mongoose.model("Course", courseSchema);
-let allCourses = null;
 
 async function getCourses() {
   const courses = await Course.find();
-  // console.log(courses);
-  allCourses = courses;
+  return courses
 }
+
 function courseValidate(course) {
   const schema = {
     studentName: Joi.string().min(3).max(50).required(),
     parentName: Joi.string().min(3).max(50).required(),
-    email: Joi.string().min(3).max(50).required(),
+    email: Joi.string().min(3).max(50).email().required(),
     phone: Joi.string().length(10).regex(/^\d+$/).required(),
     message: Joi.string().min(3).max(150).required(),
     qualification: Joi.string().min(1).max(50).required(),
@@ -51,25 +50,19 @@ function courseValidate(course) {
   };
   return Joi.validate(course, schema);
 }
-// async function createCourse(course) {
-//   try {
-//     const result = await course.save(); // or do validate()
-//     console.log(result);
-//   } catch (err) {
-//     console.log(err.message);
-//   }
-// }
+
 
 app.get("/api/data", async (req, res) => {
-  await getCourses();
+  const result = await getCourses();
   // console.log("My course:", allCourses);`
-  res.json(allCourses);
+  res.json(result);
 });
 
-app.get("/", (req, res) => {
-  getCourses();
+app.get("/", async (req, res) => {
+  const value = await getCourses();
+  console.log(value.length)
   res.send(
-    `total ${allCourses.length} courses available in the database(mongo)`
+    `Total ${value.length} Students available in the database(mongo)`
   );
 });
 
